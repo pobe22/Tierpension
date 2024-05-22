@@ -1,0 +1,14 @@
+# Backup and temporary files
+*~
+*.bkp
+*.dtmp
+
+# Visual Studio files
+Tierpension/.vs/
+
+# Build and output directories
+Tierpension/bin/
+Tierpension/obj/
+
+# User-specific project files
+Tierpension/Tierpension.csproj.user
