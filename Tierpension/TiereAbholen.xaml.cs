@@ -39,14 +39,24 @@ namespace Tierpension
                 using (StreamReader reader = new StreamReader(file.FullName))
                 {
                     string json = reader.ReadToEnd();
-                    Buchung buchung = JsonConvert.DeserializeObject<Buchung>(json);
+
+                    // Konfiguriere den JsonConverter
+                    var settings = new JsonSerializerSettings
+                    {
+                        Converters = { new TierConverter() }
+                    };
+
+                    Buchung buchung = JsonConvert.DeserializeObject<Buchung>(json, settings);
+
+                    // Füge die deserialisierte Buchung zur Liste hinzu
                     _buchungen.Add(buchung);
+
+                    // Zeige die Buchung in der ListBox an
                     string kundenName = buchung.Kunde.Name;
                     BuchungenListBox.Items.Add($"Buchungsnummer {buchung.Buchungsnummer} - Kunde: {kundenName}");
                 }
             }
         }
-
 
         private void JetztAbholen_Click(object sender, RoutedEventArgs e)
         {
@@ -97,6 +107,7 @@ namespace Tierpension
                 MessageBox.Show("Bitte wählen Sie eine Buchung aus, um sie abzuholen.");
             }
         }
+
 
         private void ZurueckZumHome_Click(object sender, RoutedEventArgs e)
         {

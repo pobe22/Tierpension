@@ -24,12 +24,13 @@ namespace Tierpension
         private void InitialisiereTiere()
         {
             _tiere = new Dictionary<string, Tier>
-            {
-                { "Hund", new Tier("Hund", 20.0m, 10.0m) },
-                { "Katze", new Tier("Katze", 15.0m, 8.0m) },
-                { "Wellensittich", new Tier("Wellensittich", 10.0m, 5.0m) }
-            };
+    {
+        { "Hund", new Hund("Hund", 20.0m, 10.0m) },
+        { "Katze", new Katze("Katze", 15.0m, 8.0m) },
+        { "Wellensittich", new Wellensittich("Wellensittich", 10.0m, 5.0m) }
+    };
         }
+
 
         private void BerechnePreis_Click(object sender, RoutedEventArgs e)
         {

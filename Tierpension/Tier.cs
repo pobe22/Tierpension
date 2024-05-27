@@ -1,16 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Tierpension
 {
-    public class Tier
+    public abstract class Tier
     {
-        public string Name { get; set; }
-        public decimal Fixpreis { get; set; }
-        public decimal Tagespreis { get; set; }
+        public string Name { get; protected set; }
+        public decimal Fixpreis { get; protected set; }
+        public decimal Tagespreis { get; protected set; }
 
         public Tier(string name, decimal fixpreis, decimal tagespreis)
         {
@@ -19,10 +15,42 @@ namespace Tierpension
             Tagespreis = tagespreis;
         }
 
-        public decimal BerechnePreis(int tage)
+        public abstract decimal BerechnePreis(int tage);
+    }
+
+    public class Hund : Tier
+    {
+        public Hund(string name, decimal fixpreis, decimal tagespreis) : base(name, fixpreis, tagespreis)
+        {
+        }
+
+        public override decimal BerechnePreis(int tage)
         {
             return Fixpreis + (Tagespreis * tage);
         }
     }
 
+    public class Katze : Tier
+    {
+        public Katze(string name, decimal fixpreis, decimal tagespreis) : base(name, fixpreis, tagespreis)
+        {
+        }
+
+        public override decimal BerechnePreis(int tage)
+        {
+            return Fixpreis + (Tagespreis * tage);
+        }
+    }
+
+    public class Wellensittich : Tier
+    {
+        public Wellensittich(string name, decimal fixpreis, decimal tagespreis) : base(name, fixpreis, tagespreis)
+        {
+        }
+
+        public override decimal BerechnePreis(int tage)
+        {
+            return Fixpreis + (Tagespreis * tage);
+        }
+    }
 }
