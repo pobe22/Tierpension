@@ -16,27 +16,23 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!-- Text über den Buttons -->
         <TextBlock Text="Willkommen bei unserer Tierpension!"
                    Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"
                    HorizontalAlignment="Center" VerticalAlignment="Center"
                    FontSize="24" FontWeight="Bold"/>
 
-        <!-- Button zum Abgeben von Tieren -->
         <Button Grid.Row="2" Grid.Column="1" Margin="10"
                 Content="Tiere abgeben" Click="TiereAbgeben_Click"
                 Height="40" Width="200"
                 Background="#4CAF50" Foreground="White"
                 BorderBrush="#4CAF50" BorderThickness="1"/>
-
-        <!-- Button zum Abholen von Tieren -->
+        
         <Button Grid.Row="2" Grid.Column="2" Margin="10"
                 Content="Tiere abholen" Click="TiereAbholen_Click"
                 Height="40" Width="200"
                 Background="#FF5722" Foreground="White"
                 BorderBrush="#FF5722" BorderThickness="1" />
 
-        <!-- Frame für die Hauptnavigation -->
         <Frame Grid.Row="1" Grid.Column="1" Grid.RowSpan="2" Grid.ColumnSpan="2"
                Name="MainFrame" NavigationUIVisibility="Hidden"/>
     </Grid>

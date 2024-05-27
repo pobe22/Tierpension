@@ -14,10 +14,9 @@ namespace Tierpension
         private Pension _tierpension;
         private Buchung _aktuelleBuchung;
 
-        public TiereAbgeben(MainWindow mainWindow)
+        public TiereAbgeben()
         {
             InitializeComponent();
-            _mainWindow = mainWindow;
             InitialisiereTiere();
             _tierpension = new Pension("Meine Tierpension", "Musterstraße 1");
         }
@@ -106,6 +105,7 @@ namespace Tierpension
                 BuchungAbschliessenButton.Visibility = Visibility.Collapsed;
             }
         }
+
         private void TageSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             if (TageAnzeige != null)
@@ -114,13 +114,12 @@ namespace Tierpension
             }
         }
 
-
         private void ZurueckZumHome_Click(object sender, RoutedEventArgs e)
         {
-            MainWindow mainWindow = new MainWindow();
-            mainWindow.Show();
-
-            Window.GetWindow(this)?.Close();
+            MainWindow mainWindow = Application.Current.MainWindow as MainWindow;
+            mainWindow.Visibility = Visibility.Visible;
+            Window win = (Window)this.Parent;
+            win.Close();
         }
 
         private void TextBox_GotFocus(object sender, RoutedEventArgs e)

@@ -86,10 +86,10 @@ namespace Tierpension
         }
         private void ZurueckZumHome_Click(object sender, RoutedEventArgs e)
         {
-            MainWindow mainWindow = new MainWindow();
-            mainWindow.Show();
-
-            Window.GetWindow(this)?.Close();
+            MainWindow mainWindow = Application.Current.MainWindow as MainWindow;
+            mainWindow.Visibility = Visibility.Visible;
+            Window win = (Window)this.Parent;
+            win.Close();
         }
 
     }
