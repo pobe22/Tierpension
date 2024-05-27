@@ -45,14 +45,11 @@ namespace Tierpension
                     Tier tier = _tiere[tierName];
                     Kunde kunde = new Kunde(KundennameTextBox.Text, AdresseTextBox.Text, TelefonnummerTextBox.Text);
 
-                    // Suchen der höchsten Buchungsnummer und Inkrementieren um 1
                     int neueBuchungsnummer = FindeNeueBuchungsnummer();
 
-                    // Erstellung der Buchung mit der neuen Buchungsnummer
                     _aktuelleBuchung = new Buchung(neueBuchungsnummer, DateTime.Now, DateTime.Now.AddDays((int)TageSlider.Value), kunde, tier);
                     _tierpension.AddBuchung(_aktuelleBuchung);
 
-                    // Speichern der Buchung in einer Datei
                     SpeichereBuchungInDatei(_aktuelleBuchung, neueBuchungsnummer);
 
                     decimal preis = _aktuelleBuchung.BerechnePreis();

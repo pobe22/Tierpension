@@ -41,7 +41,8 @@ namespace Tierpension
                     string json = reader.ReadToEnd();
                     Buchung buchung = JsonConvert.DeserializeObject<Buchung>(json);
                     _buchungen.Add(buchung);
-                    BuchungenListBox.Items.Add($"Buchungsnummer {buchung.Buchungsnummer}");
+                    string kundenName = buchung.Kunde.Name;
+                    BuchungenListBox.Items.Add($"Buchungsnummer {buchung.Buchungsnummer} - Kunde: {kundenName}");
                 }
             }
         }
@@ -49,24 +50,36 @@ namespace Tierpension
 
         private void JetztAbholen_Click(object sender, RoutedEventArgs e)
         {
-            if (BuchungenListBox.SelectedItem is string selectedBuchungsnummer)
+            if (BuchungenListBox.SelectedItem is string selectedBuchung)
             {
-                if (!string.IsNullOrEmpty(selectedBuchungsnummer))
+                if (!string.IsNullOrEmpty(selectedBuchung))
                 {
-                    string[] parts = selectedBuchungsnummer.Split(' ');
-                    if (parts.Length == 2 && int.TryParse(parts[1], out int buchungsnummer))
+                    // Extrahiere die Buchungsnummer aus dem ausgewählten Eintrag
+                    string[] parts = selectedBuchung.Split(' ');
+                    if (parts.Length >= 3 && int.TryParse(parts[1], out int buchungsnummer))
                     {
-                        Buchung selectedBuchung = _buchungen.FirstOrDefault(b => b.Buchungsnummer == buchungsnummer);
-                        if (selectedBuchung != null)
+                        // Extrahiere den Kundennamen aus dem ausgewählten Eintrag
+                        string kundenName = string.Join(" ", parts[2..]);
+
+                        // Extrahiere den tatsächlichen Kundenname
+                        string[] nameParts = kundenName.Split(':');
+                        if (nameParts.Length >= 2)
                         {
-                            string filePath = $"Buchung_{selectedBuchung.Buchungsnummer}.json";
+                            kundenName = nameParts[1].Trim();
+                        }
+
+                        // Suche die ausgewählte Buchung anhand der Buchungsnummer und des Kundennamens
+                        Buchung gefundenBuchung = _buchungen.FirstOrDefault(b => b.Buchungsnummer == buchungsnummer && b.Kunde.Name == kundenName);
+                        if (gefundenBuchung != null)
+                        {
+                            string filePath = $"Buchung_{gefundenBuchung.Buchungsnummer}.json";
                             File.Delete(filePath);
-                            MessageBox.Show($"Buchung {selectedBuchung.Buchungsnummer} erfolgreich abgeholt und gelöscht.");
-                            BuchungenListBox.Items.Remove(selectedBuchungsnummer);
+                            MessageBox.Show($"Buchung {gefundenBuchung.Buchungsnummer} von {gefundenBuchung.Kunde.Name} erfolgreich abgeholt und gelöscht.");
+                            BuchungenListBox.Items.Remove(selectedBuchung);
                         }
                         else
                         {
-                            MessageBox.Show($"Die Buchung mit der Buchungsnummer {buchungsnummer} wurde nicht gefunden.");
+                            MessageBox.Show($"Die Buchung von {kundenName} mit der Buchungsnummer {buchungsnummer} wurde nicht gefunden.");
                         }
                     }
                     else
@@ -84,6 +97,7 @@ namespace Tierpension
                 MessageBox.Show("Bitte wählen Sie eine Buchung aus, um sie abzuholen.");
             }
         }
+
         private void ZurueckZumHome_Click(object sender, RoutedEventArgs e)
         {
             MainWindow mainWindow = Application.Current.MainWindow as MainWindow;
