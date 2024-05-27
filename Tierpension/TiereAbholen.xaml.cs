@@ -84,5 +84,13 @@ namespace Tierpension
                 MessageBox.Show("Bitte wählen Sie eine Buchung aus, um sie abzuholen.");
             }
         }
+        private void ZurueckZumHome_Click(object sender, RoutedEventArgs e)
+        {
+            MainWindow mainWindow = new MainWindow();
+            mainWindow.Show();
+
+            Window.GetWindow(this)?.Close();
+        }
+
     }
 }

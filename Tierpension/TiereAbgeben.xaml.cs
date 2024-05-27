@@ -35,7 +35,7 @@ namespace Tierpension
         private void BerechnePreis_Click(object sender, RoutedEventArgs e)
         {
             if (TierComboBox.SelectedItem is ComboBoxItem selectedItem &&
-                int.TryParse(TageTextBox.Text, out int tage) &&
+                TageSlider.Value >= 0 &&
                 !string.IsNullOrEmpty(KundennameTextBox.Text) &&
                 !string.IsNullOrEmpty(AdresseTextBox.Text) &&
                 !string.IsNullOrEmpty(TelefonnummerTextBox.Text))
@@ -50,14 +50,14 @@ namespace Tierpension
                     int neueBuchungsnummer = FindeNeueBuchungsnummer();
 
                     // Erstellung der Buchung mit der neuen Buchungsnummer
-                    _aktuelleBuchung = new Buchung(neueBuchungsnummer, DateTime.Now, DateTime.Now.AddDays(tage), kunde, tier);
+                    _aktuelleBuchung = new Buchung(neueBuchungsnummer, DateTime.Now, DateTime.Now.AddDays((int)TageSlider.Value), kunde, tier);
                     _tierpension.AddBuchung(_aktuelleBuchung);
 
                     // Speichern der Buchung in einer Datei
                     SpeichereBuchungInDatei(_aktuelleBuchung, neueBuchungsnummer);
 
                     decimal preis = _aktuelleBuchung.BerechnePreis();
-                    ErgebnisTextBlock.Text = $"Der Preis für {tage} Tage {tierName} beträgt {preis:C}.";
+                    ErgebnisTextBlock.Text = $"Der Preis für {(int)TageSlider.Value} Tage {tierName} beträgt {preis:C}.";
                     BuchungAbschliessenButton.Visibility = Visibility.Visible;
                 }
                 else
@@ -70,6 +70,7 @@ namespace Tierpension
                 ErgebnisTextBlock.Text = "Bitte wählen Sie ein Tier und geben Sie alle erforderlichen Daten ein.";
             }
         }
+
 
         private int FindeNeueBuchungsnummer()
         {
@@ -105,6 +106,14 @@ namespace Tierpension
                 BuchungAbschliessenButton.Visibility = Visibility.Collapsed;
             }
         }
+        private void TageSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (TageAnzeige != null)
+            {
+                TageAnzeige.Text = $"Anzahl der Tage: {TageSlider.Value}";
+            }
+        }
+
 
         private void ZurueckZumHome_Click(object sender, RoutedEventArgs e)
         {
