@@ -27,6 +27,7 @@ namespace Tierpension
                 {
                     string json = reader.ReadToEnd();
                     Buchung buchung = JsonConvert.DeserializeObject<Buchung>(json);
+                    _buchungen.Add(buchung);
                     BuchungenListBox.Items.Add($"Buchungsnummer {buchung.Buchungsnummer}");
                 }
             }
@@ -39,11 +40,9 @@ namespace Tierpension
             {
                 if (!string.IsNullOrEmpty(selectedBuchungsnummer))
                 {
-                    // Extrahiere die Buchungsnummer aus dem ausgewählten Text
                     string[] parts = selectedBuchungsnummer.Split(' ');
                     if (parts.Length == 2 && int.TryParse(parts[1], out int buchungsnummer))
                     {
-                        // Finde die Buchung mit der entsprechenden Buchungsnummer und entferne sie
                         Buchung selectedBuchung = _buchungen.FirstOrDefault(b => b.Buchungsnummer == buchungsnummer);
                         if (selectedBuchung != null)
                         {
