@@ -79,8 +79,7 @@ namespace Tierpension
             foreach (FileInfo file in jsonFiles)
             {
                 string fileName = Path.GetFileNameWithoutExtension(file.Name);
-                int num;
-                if (int.TryParse(fileName.Substring(8), out num))
+                if (int.TryParse(fileName.Substring(8), out int num))
                 {
                     maxBuchungsnummer = Math.Max(maxBuchungsnummer, num);
                 }
@@ -94,8 +93,6 @@ namespace Tierpension
             string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, $"Buchung_{buchungsnummer}.json");
             File.WriteAllText(filePath, json);
         }
-
-
 
         private void BuchungAbschliessen_Click(object sender, RoutedEventArgs e)
         {
@@ -111,7 +108,10 @@ namespace Tierpension
 
         private void ZurueckZumHome_Click(object sender, RoutedEventArgs e)
         {
-            _mainWindow.MainFrame.Navigate(new Uri("MainWindow.xaml", UriKind.Relative));
+            MainWindow mainWindow = new MainWindow();
+            mainWindow.Show();
+
+            Window.GetWindow(this)?.Close();
         }
 
         private void TextBox_GotFocus(object sender, RoutedEventArgs e)

@@ -21,9 +21,8 @@ namespace Tierpension
 
         private void TiereAbholen_Click(object sender, RoutedEventArgs e)
         {
-            TiereAbholenScreen tiereAbholenScreen = new TiereAbholenScreen();
-            tiereAbholenScreen.Show();
-            Close();
+            TiereAbholen tiereAbholen = new TiereAbholen();
+            MainFrame.Navigate(tiereAbholen);
         }
 
 

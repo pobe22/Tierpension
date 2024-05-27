@@ -1,17 +1,30 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
-using Newtonsoft.Json;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
 
 namespace Tierpension
 {
-    public partial class TiereAbholenScreen : Window
+    /// <summary>
+    /// Interaction logic for TiereAbholen.xaml
+    /// </summary>
+    public partial class TiereAbholen : Page
     {
         private List<Buchung> _buchungen = new List<Buchung>();
 
-        public TiereAbholenScreen()
+        public TiereAbholen()
         {
             InitializeComponent();
             LadeBuchungen();
@@ -71,6 +84,5 @@ namespace Tierpension
                 MessageBox.Show("Bitte wählen Sie eine Buchung aus, um sie abzuholen.");
             }
         }
-
     }
 }
