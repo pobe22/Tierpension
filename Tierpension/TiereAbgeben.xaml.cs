@@ -63,9 +63,6 @@ namespace Tierpension
                     int neueBuchungsnummer = FindeNeueBuchungsnummer();
 
                     _aktuelleBuchung = new Buchung(neueBuchungsnummer, DateTime.Now, DateTime.Now.AddDays((int)TageSlider.Value), kunde, tier);
-                    _tierpension.AddBuchung(_aktuelleBuchung); // Verwendung von _tierpension nach Initialisierung
-
-                    SpeichereBuchungInDatei(_aktuelleBuchung, neueBuchungsnummer);
 
                     decimal preis = _aktuelleBuchung.BerechnePreis();
                     ErgebnisTextBlock.Text = $"Der Preis für {(int)TageSlider.Value} Tage {selectedTier} beträgt {preis:C}.";
@@ -114,6 +111,10 @@ namespace Tierpension
                 File.WriteAllText(filePath, json);
                 MessageBox.Show($"Buchung gespeichert unter {filePath}");
                 BuchungAbschliessenButton.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                MessageBox.Show("Es wurde keine Buchung erstellt.");
             }
         }
 

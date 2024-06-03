@@ -12,11 +12,19 @@
     <Grid>
         <StackPanel Margin="10">
             <TextBlock Text="Hier können Sie Ihre Tiere abholen:" Margin="0,0,0,10" FontSize="16" FontWeight="Bold"/>
-            <ListBox x:Name="BuchungenListBox" 
-                     HorizontalAlignment="Stretch" 
-                     VerticalAlignment="Stretch" 
-                     DisplayMemberPath="."
-                     Height="200"/>
+            <ListBox Name="BuchungenListBox">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <!-- Hier fügen Sie das PDF-Icon hinzu -->
+                            <Image Source="C:\Users\Benjamin.Pollak\Documents\2aDAC\ITL\Tierpension\Tierpension\pdficon.png" Width="20" Height="20" MouseDown="PdfIcon_Click"/>
+                            <!-- Hier fügen Sie den Text für die Buchung hinzu -->
+                            <TextBlock Text="{Binding Buchungsnummer}" Margin="5"/>
+                            <TextBlock Text="{Binding Kunde.Name}" Margin="5"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,0">
                 <Button Content="Jetzt abholen" 
                         Click="JetztAbholen_Click" 

@@ -1,4 +1,7 @@
 ﻿using Newtonsoft.Json;
+using PdfSharp.Drawing.Layout;
+using PdfSharp.Drawing;
+using PdfSharp.Pdf;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -34,6 +37,10 @@ namespace Tierpension
         {
             DirectoryInfo directoryInfo = new DirectoryInfo(Directory.GetCurrentDirectory());
             FileInfo[] jsonFiles = directoryInfo.GetFiles("Buchung_*.json");
+
+            // Leeren der Items-Sammlung
+            BuchungenListBox.Items.Clear();
+
             foreach (FileInfo file in jsonFiles)
             {
                 using (StreamReader reader = new StreamReader(file.FullName))
@@ -46,63 +53,122 @@ namespace Tierpension
                     };
 
                     Buchung buchung = JsonConvert.DeserializeObject<Buchung>(json, settings);
-
                     _buchungen.Add(buchung);
-
-                    string kundenName = buchung.Kunde.Name;
-                    BuchungenListBox.Items.Add($"Buchungsnummer {buchung.Buchungsnummer} - Kunde: {kundenName}");
                 }
+            }
+
+            // Setzen der ItemsSource nachdem die Items-Sammlung geleert wurde
+            BuchungenListBox.ItemsSource = _buchungen;
+        }
+
+        private string ErstellePDF(Buchung buchung)
+        {
+            if (buchung != null)
+            {
+                try
+                {
+                    string pdfPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, $"Buchung_{buchung.Buchungsnummer}.pdf");
+                    PdfDocument document = new PdfDocument();
+                    PdfPage page = document.AddPage();
+                    XGraphics gfx = XGraphics.FromPdfPage(page);
+
+                    XFont font = new XFont("Verdana", 12);
+                    gfx.DrawString("Ihre Buchung:", font, XBrushes.Black, new XPoint(10, 10), XStringFormats.TopLeft);
+
+                    XTextFormatter tf = new XTextFormatter(gfx);
+                    XRect rect = new XRect(40, 40, page.Width - 80, page.Height - 80);
+                    tf.DrawString($"Buchungsnummer: {buchung.Buchungsnummer}\nKunde: {buchung.Kunde.Name}\nAdresse: {buchung.Kunde.Adresse}\nTelefonnummer: {buchung.Kunde.Telefonnummer}\nTiername: {buchung.Tier.Name}\nFixpreis: {buchung.Tier.Fixpreis}\nTagespreis: {buchung.Tier.Tagespreis}\nEssen: {string.Join(", ", buchung.Tier.Essen)}", font, XBrushes.Black, rect, XStringFormats.TopLeft);
+
+                    document.Save(pdfPath);
+                    document.Close();
+
+                    return pdfPath;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Fehler beim Erstellen des PDFs: {ex.Message}");
+                    return null;
+                }
+            }
+            else
+            {
+                MessageBox.Show("Ungültige Buchung.");
+                return null;
             }
         }
 
-
         private void JetztAbholen_Click(object sender, RoutedEventArgs e)
         {
-            if (BuchungenListBox.SelectedItem is string selectedBuchung)
+            if (BuchungenListBox.SelectedItem is Buchung selectedBuchung)
             {
-                if (!string.IsNullOrEmpty(selectedBuchung))
+                if (selectedBuchung != null)
                 {
-                    // Extrahiere die Buchungsnummer aus dem ausgewählten Eintrag
-                    string[] parts = selectedBuchung.Split(' ');
-                    if (parts.Length >= 3 && int.TryParse(parts[1], out int buchungsnummer))
+                    // Suche die ausgewählte Buchung anhand der Buchungsnummer und des Kundennamens
+                    Buchung gefundenBuchung = _buchungen.FirstOrDefault(b => b.Buchungsnummer == selectedBuchung.Buchungsnummer && b.Kunde.Name == selectedBuchung.Kunde.Name);
+                    if (gefundenBuchung != null)
                     {
-                        // Extrahiere den Kundennamen aus dem ausgewählten Eintrag
-                        string kundenName = string.Join(" ", parts[2..]);
-
-                        // Extrahiere den tatsächlichen Kundenname
-                        string[] nameParts = kundenName.Split(':');
-                        if (nameParts.Length >= 2)
+                        string filePath = $"Buchung_{gefundenBuchung.Buchungsnummer}.json";
+                        if (File.Exists(filePath))
                         {
-                            kundenName = nameParts[1].Trim();
-                        }
-
-                        // Suche die ausgewählte Buchung anhand der Buchungsnummer und des Kundennamens
-                        Buchung gefundenBuchung = _buchungen.FirstOrDefault(b => b.Buchungsnummer == buchungsnummer && b.Kunde.Name == kundenName);
-                        if (gefundenBuchung != null)
-                        {
-                            string filePath = $"Buchung_{gefundenBuchung.Buchungsnummer}.json";
                             File.Delete(filePath);
                             MessageBox.Show($"Buchung {gefundenBuchung.Buchungsnummer} von {gefundenBuchung.Kunde.Name} erfolgreich abgeholt und gelöscht.");
-                            BuchungenListBox.Items.Remove(selectedBuchung);
+
+                            // Entferne die Buchung aus der Liste und aktualisiere die ItemsSource
+                            _buchungen.Remove(gefundenBuchung);
+                            BuchungenListBox.ItemsSource = null;  // Setze ItemsSource auf null
+                            BuchungenListBox.ItemsSource = _buchungen;  // Setze ItemsSource erneut
                         }
                         else
                         {
-                            MessageBox.Show($"Die Buchung von {kundenName} mit der Buchungsnummer {buchungsnummer} wurde nicht gefunden.");
+                            MessageBox.Show($"Die Datei für die Buchung {gefundenBuchung.Buchungsnummer} wurde nicht gefunden.");
                         }
                     }
                     else
                     {
-                        MessageBox.Show("Ungültiges Format für die ausgewählte Buchungsnummer.");
+                        MessageBox.Show($"Die Buchung von {selectedBuchung.Kunde.Name} mit der Buchungsnummer {selectedBuchung.Buchungsnummer} wurde nicht gefunden.");
                     }
                 }
                 else
                 {
-                    MessageBox.Show("Die ausgewählte Buchungsnummer ist leer.");
+                    MessageBox.Show("Die ausgewählte Buchung ist leer.");
                 }
             }
             else
             {
                 MessageBox.Show("Bitte wählen Sie eine Buchung aus, um sie abzuholen.");
+            }
+        }
+
+
+
+        private void PdfIcon_Click(object sender, MouseButtonEventArgs e)
+        {
+            var selectedBuchung = (sender as FrameworkElement)?.DataContext as Buchung;
+
+            if (selectedBuchung != null)
+            {
+                string pdfPath = ErstellePDF(selectedBuchung);
+
+                if (!string.IsNullOrEmpty(pdfPath))
+                {
+                    try
+                    {
+                        var processStartInfo = new System.Diagnostics.ProcessStartInfo
+                        {
+                            FileName = pdfPath,
+                            UseShellExecute = true
+                        };
+                        System.Diagnostics.Process.Start(processStartInfo);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Fehler beim Öffnen der PDF-Datei: {ex.Message}");
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("PDF-Datei nicht gefunden.");
+                }
             }
         }
 
