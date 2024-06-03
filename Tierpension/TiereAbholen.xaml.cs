@@ -40,7 +40,6 @@ namespace Tierpension
                 {
                     string json = reader.ReadToEnd();
 
-                    // Konfiguriere den JsonConverter
                     var settings = new JsonSerializerSettings
                     {
                         Converters = { new TierConverter() }
@@ -48,15 +47,14 @@ namespace Tierpension
 
                     Buchung buchung = JsonConvert.DeserializeObject<Buchung>(json, settings);
 
-                    // Füge die deserialisierte Buchung zur Liste hinzu
                     _buchungen.Add(buchung);
 
-                    // Zeige die Buchung in der ListBox an
                     string kundenName = buchung.Kunde.Name;
                     BuchungenListBox.Items.Add($"Buchungsnummer {buchung.Buchungsnummer} - Kunde: {kundenName}");
                 }
             }
         }
+
 
         private void JetztAbholen_Click(object sender, RoutedEventArgs e)
         {

@@ -9,7 +9,6 @@ namespace Tierpension
 {
     public partial class TiereAbgeben : Page
     {
-        private MainWindow _mainWindow;
         private Dictionary<string, Tier> _tiere;
         private Pension _tierpension;
         private Buchung _aktuelleBuchung;
@@ -18,43 +17,58 @@ namespace Tierpension
         {
             InitializeComponent();
             InitialisiereTiere();
-            _tierpension = new Pension("Meine Tierpension", "Musterstraße 1");
+            InitialisiereComboBox();
+            _tierpension = new Pension("Meine Tierpension", "Musterstraße 1"); // Initialisierung von _tierpension
         }
 
         private void InitialisiereTiere()
         {
             _tiere = new Dictionary<string, Tier>
-    {
-        { "Hund", new Hund("Hund", 20.0m, 10.0m) },
-        { "Katze", new Katze("Katze", 15.0m, 8.0m) },
-        { "Wellensittich", new Wellensittich("Wellensittich", 10.0m, 5.0m) }
-    };
+            {
+                { "Hund", new Hund("Hund", 20.0m, 10.0m, new List<string> { "Fleisch", "Knochen" }) },
+                { "Katze", new Katze("Katze", 15.0m, 8.0m, new List<string> { "Fisch", "Milch" }) },
+                { "Wellensittich", new Wellensittich("Wellensittich", 10.0m, 5.0m, new List<string> { "Samen", "Obst" }) }
+            };
         }
 
+        private void InitialisiereComboBox()
+        {
+            // Leere die Items-Sammlung, bevor die ItemsSource festgelegt wird
+            TierComboBox.Items.Clear();
+            TierComboBox.ItemsSource = _tiere.Keys;
+        }
+
+        private void TierComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (TierComboBox.SelectedItem is string selectedTier && _tiere.ContainsKey(selectedTier))
+            {
+                Tier tier = _tiere[selectedTier];
+                EssenComboBox.ItemsSource = tier.Essen;
+            }
+        }
 
         private void BerechnePreis_Click(object sender, RoutedEventArgs e)
         {
-            if (TierComboBox.SelectedItem is ComboBoxItem selectedItem &&
+            if (TierComboBox.SelectedItem is string selectedTier &&
                 TageSlider.Value >= 0 &&
                 !string.IsNullOrEmpty(KundennameTextBox.Text) &&
                 !string.IsNullOrEmpty(AdresseTextBox.Text) &&
                 !string.IsNullOrEmpty(TelefonnummerTextBox.Text))
             {
-                string tierName = selectedItem.Content.ToString();
-                if (_tiere.ContainsKey(tierName))
+                if (_tiere.ContainsKey(selectedTier))
                 {
-                    Tier tier = _tiere[tierName];
+                    Tier tier = _tiere[selectedTier];
                     Kunde kunde = new Kunde(KundennameTextBox.Text, AdresseTextBox.Text, TelefonnummerTextBox.Text);
 
                     int neueBuchungsnummer = FindeNeueBuchungsnummer();
 
                     _aktuelleBuchung = new Buchung(neueBuchungsnummer, DateTime.Now, DateTime.Now.AddDays((int)TageSlider.Value), kunde, tier);
-                    _tierpension.AddBuchung(_aktuelleBuchung);
+                    _tierpension.AddBuchung(_aktuelleBuchung); // Verwendung von _tierpension nach Initialisierung
 
                     SpeichereBuchungInDatei(_aktuelleBuchung, neueBuchungsnummer);
 
                     decimal preis = _aktuelleBuchung.BerechnePreis();
-                    ErgebnisTextBlock.Text = $"Der Preis für {(int)TageSlider.Value} Tage {tierName} beträgt {preis:C}.";
+                    ErgebnisTextBlock.Text = $"Der Preis für {(int)TageSlider.Value} Tage {selectedTier} beträgt {preis:C}.";
                     BuchungAbschliessenButton.Visibility = Visibility.Visible;
                 }
                 else
@@ -67,7 +81,6 @@ namespace Tierpension
                 ErgebnisTextBlock.Text = "Bitte wählen Sie ein Tier und geben Sie alle erforderlichen Daten ein.";
             }
         }
-
 
         private int FindeNeueBuchungsnummer()
         {

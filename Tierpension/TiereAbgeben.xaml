@@ -17,11 +17,10 @@
             <TextBox Name="TelefonnummerTextBox" Text="Telefonnummer" Margin="0,0,0,10" GotFocus="TextBox_GotFocus" LostFocus="TextBox_LostFocus" Width="200" HorizontalAlignment="Left"/>
 
             <TextBlock Text="Wählen Sie ein Tier:" Margin="0,10,0,10" FontSize="16" FontWeight="Bold"/>
-            <ComboBox Name="TierComboBox" Margin="0,0,0,10" Width="200" HorizontalAlignment="Left">
-                <ComboBoxItem Content="Hund" />
-                <ComboBoxItem Content="Katze" />
-                <ComboBoxItem Content="Wellensittich" />
-            </ComboBox>
+            <ComboBox Name="TierComboBox" Margin="0,0,0,10" Width="200" HorizontalAlignment="Left" SelectionChanged="TierComboBox_SelectionChanged"/>
+
+            <TextBlock Text="Wählen Sie das Essen:"  Margin="0,10,0,10" FontSize="16" FontWeight="Bold"/>
+            <ComboBox Name="EssenComboBox" Margin="0,0,0,10" Width="200" HorizontalAlignment="Left" />
 
             <TextBlock Text="Anzahl der Tage:" Margin="0,10,0,10" FontSize="16" FontWeight="Bold"/>
             <StackPanel Orientation="Horizontal">
