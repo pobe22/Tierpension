@@ -26,21 +26,21 @@ namespace Tierpension
     public partial class TiereAbholen : Page
     {
         private List<Buchung> _buchungen = new List<Buchung>();
+        private string _Name;
 
-        public TiereAbholen()
+        public TiereAbholen(string Name)
         {
             InitializeComponent();
+            _Name = Name;
             LadeBuchungen();
+            DataContext = this;
         }
+        
 
         private void LadeBuchungen()
         {
             DirectoryInfo directoryInfo = new DirectoryInfo(Directory.GetCurrentDirectory());
             FileInfo[] jsonFiles = directoryInfo.GetFiles("Buchung_*.json");
-
-            // Leeren der Items-Sammlung
-            BuchungenListBox.Items.Clear();
-
             foreach (FileInfo file in jsonFiles)
             {
                 using (StreamReader reader = new StreamReader(file.FullName))
@@ -53,11 +53,15 @@ namespace Tierpension
                     };
 
                     Buchung buchung = JsonConvert.DeserializeObject<Buchung>(json, settings);
-                    _buchungen.Add(buchung);
+
+                    // Füge nur Buchungen des aktuellen Benutzers hinzu
+                    if (buchung.Kunde.Name.Equals(_Name, StringComparison.OrdinalIgnoreCase))
+                    {
+                        _buchungen.Add(buchung);
+                    }
                 }
             }
 
-            // Setzen der ItemsSource nachdem die Items-Sammlung geleert wurde
             BuchungenListBox.ItemsSource = _buchungen;
         }
 
@@ -73,7 +77,7 @@ namespace Tierpension
                     XGraphics gfx = XGraphics.FromPdfPage(page);
 
                     XFont font = new XFont("Verdana", 12);
-                    gfx.DrawString("Ihre Buchung:", font, XBrushes.Black, new XPoint(10, 10), XStringFormats.TopLeft);
+                    gfx.DrawString("Ihr fett-kursiver Text", font, XBrushes.Black, new XPoint(10, 10), XStringFormats.TopLeft);
 
                     XTextFormatter tf = new XTextFormatter(gfx);
                     XRect rect = new XRect(40, 40, page.Width - 80, page.Height - 80);
@@ -101,36 +105,26 @@ namespace Tierpension
         {
             if (BuchungenListBox.SelectedItem is Buchung selectedBuchung)
             {
-                if (selectedBuchung != null)
+                Buchung gefundenBuchung = _buchungen.FirstOrDefault(b => b.Buchungsnummer == selectedBuchung.Buchungsnummer && b.Kunde.Name == selectedBuchung.Kunde.Name);
+                if (gefundenBuchung != null)
                 {
-                    // Suche die ausgewählte Buchung anhand der Buchungsnummer und des Kundennamens
-                    Buchung gefundenBuchung = _buchungen.FirstOrDefault(b => b.Buchungsnummer == selectedBuchung.Buchungsnummer && b.Kunde.Name == selectedBuchung.Kunde.Name);
-                    if (gefundenBuchung != null)
+                    string filePath = $"Buchung_{gefundenBuchung.Buchungsnummer}.json";
+                    if (File.Exists(filePath))
                     {
-                        string filePath = $"Buchung_{gefundenBuchung.Buchungsnummer}.json";
-                        if (File.Exists(filePath))
-                        {
-                            File.Delete(filePath);
-                            MessageBox.Show($"Buchung {gefundenBuchung.Buchungsnummer} von {gefundenBuchung.Kunde.Name} erfolgreich abgeholt und gelöscht.");
-
-                            // Entferne die Buchung aus der Liste und aktualisiere die ItemsSource
-                            _buchungen.Remove(gefundenBuchung);
-                            BuchungenListBox.ItemsSource = null;  // Setze ItemsSource auf null
-                            BuchungenListBox.ItemsSource = _buchungen;  // Setze ItemsSource erneut
-                        }
-                        else
-                        {
-                            MessageBox.Show($"Die Datei für die Buchung {gefundenBuchung.Buchungsnummer} wurde nicht gefunden.");
-                        }
+                        File.Delete(filePath);
+                        MessageBox.Show($"Buchung {gefundenBuchung.Buchungsnummer} von {gefundenBuchung.Kunde.Name} erfolgreich abgeholt und gelöscht.");
+                        _buchungen.Remove(gefundenBuchung);
+                        BuchungenListBox.ItemsSource = null;
+                        BuchungenListBox.ItemsSource = _buchungen;
                     }
                     else
                     {
-                        MessageBox.Show($"Die Buchung von {selectedBuchung.Kunde.Name} mit der Buchungsnummer {selectedBuchung.Buchungsnummer} wurde nicht gefunden.");
+                        MessageBox.Show($"Die Datei für die Buchung {gefundenBuchung.Buchungsnummer} wurde nicht gefunden.");
                     }
                 }
                 else
                 {
-                    MessageBox.Show("Die ausgewählte Buchung ist leer.");
+                    MessageBox.Show($"Die Buchung von {selectedBuchung.Kunde.Name} mit der Buchungsnummer {selectedBuchung.Buchungsnummer} wurde nicht gefunden.");
                 }
             }
             else
