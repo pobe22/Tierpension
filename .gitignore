@@ -12,3 +12,7 @@ Tierpension/obj/
 
 # User-specific project files
 Tierpension/Tierpension.csproj.user
+
+# Pictures
+*.PNG
+*.png
