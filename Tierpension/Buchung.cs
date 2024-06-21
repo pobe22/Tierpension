@@ -13,14 +13,16 @@ namespace Tierpension
         public DateTime Enddatum { get; set; }
         public Kunde Kunde { get; set; }
         public Tier Tier { get; set; }
+        public decimal Preis { get; set; }
 
-        public Buchung(int buchungsnummer, DateTime startdatum, DateTime enddatum, Kunde kunde, Tier tier)
+        public Buchung(int buchungsnummer, DateTime startdatum, DateTime enddatum, Kunde kunde, Tier tier, decimal preis)
         {
             Buchungsnummer = buchungsnummer;
             Startdatum = startdatum;
             Enddatum = enddatum;
             Kunde = kunde;
             Tier = tier;
+            Preis = preis;
         }
 
         public int BerechneTage()
@@ -31,6 +33,7 @@ namespace Tierpension
         public decimal BerechnePreis()
         {
             return Tier.BerechnePreis(BerechneTage());
+
         }
     }
 

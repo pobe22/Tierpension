@@ -19,7 +19,7 @@ namespace Tierpension
             InitializeComponent();
             InitialisiereTiere();
             InitialisiereComboBox();
-            _tierpension = new Pension("Meine Tierpension", "Musterstraße 1"); // Initialisierung von _tierpension
+            _tierpension = new Pension("Meine Tierpension", "Musterstraße 1"); 
             BenutzerName = benutzerName;
             DataContext = this;
         }
@@ -36,7 +36,6 @@ namespace Tierpension
 
         private void InitialisiereComboBox()
         {
-            // Leere die Items-Sammlung, bevor die ItemsSource festgelegt wird
             TierComboBox.Items.Clear();
             TierComboBox.ItemsSource = _tiere.Keys;
         }
@@ -61,13 +60,15 @@ namespace Tierpension
                 {
                     Tier tier = _tiere[selectedTier];
                     Kunde kunde = new Kunde(BenutzerName, AdresseTextBox.Text, TelefonnummerTextBox.Text);
+                    int tage = (int)TageSlider.Value;
+
+                    decimal preis = Math.Round(tier.BerechnePreis(tage), 2);
 
                     int neueBuchungsnummer = FindeNeueBuchungsnummer();
 
-                    _aktuelleBuchung = new Buchung(neueBuchungsnummer, DateTime.Now, DateTime.Now.AddDays((int)TageSlider.Value), kunde, tier);
+                    _aktuelleBuchung = new Buchung(neueBuchungsnummer, DateTime.Now, DateTime.Now.AddDays(tage), kunde, tier, preis);
 
-                    decimal preis = _aktuelleBuchung.BerechnePreis();
-                    ErgebnisTextBlock.Text = $"Der Preis für {(int)TageSlider.Value} Tage {selectedTier} beträgt {preis:C}.";
+                    ErgebnisTextBlock.Text = $"Der Preis für {tage} Tage {selectedTier} beträgt {preis:C}.";
                     BuchungAbschliessenButton.Visibility = Visibility.Visible;
                 }
                 else
@@ -80,6 +81,7 @@ namespace Tierpension
                 ErgebnisTextBlock.Text = "Bitte wählen Sie ein Tier und geben Sie alle erforderlichen Daten ein.";
             }
         }
+
 
         private int FindeNeueBuchungsnummer()
         {
@@ -97,12 +99,6 @@ namespace Tierpension
             return maxBuchungsnummer + 1;
         }
 
-        private void SpeichereBuchungInDatei(Buchung buchung, int buchungsnummer)
-        {
-            string json = JsonConvert.SerializeObject(buchung, Newtonsoft.Json.Formatting.Indented);
-            string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, $"Buchung_{buchungsnummer}.json");
-            File.WriteAllText(filePath, json);
-        }
 
         private void BuchungAbschliessen_Click(object sender, RoutedEventArgs e)
         {

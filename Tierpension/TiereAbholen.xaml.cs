@@ -35,34 +35,34 @@ namespace Tierpension
             LadeBuchungen();
             DataContext = this;
         }
-        
+
 
         private void LadeBuchungen()
         {
-            DirectoryInfo directoryInfo = new DirectoryInfo(Directory.GetCurrentDirectory());
-            FileInfo[] jsonFiles = directoryInfo.GetFiles("Buchung_*.json");
-            foreach (FileInfo file in jsonFiles)
-            {
-                using (StreamReader reader = new StreamReader(file.FullName))
+
+                DirectoryInfo directoryInfo = new DirectoryInfo(Directory.GetCurrentDirectory());
+                FileInfo[] jsonFiles = directoryInfo.GetFiles("Buchung_*.json");
+                foreach (FileInfo file in jsonFiles)
                 {
-                    string json = reader.ReadToEnd();
-
-                    var settings = new JsonSerializerSettings
+                    using (StreamReader reader = new StreamReader(file.FullName))
                     {
-                        Converters = { new TierConverter() }
-                    };
+                        string json = reader.ReadToEnd();
 
-                    Buchung buchung = JsonConvert.DeserializeObject<Buchung>(json, settings);
+                        var settings = new JsonSerializerSettings
+                        {
+                            Converters = { new TierConverter() }
+                        };
 
-                    // Füge nur Buchungen des aktuellen Benutzers hinzu
-                    if (buchung.Kunde.Name.Equals(_Name, StringComparison.OrdinalIgnoreCase))
-                    {
-                        _buchungen.Add(buchung);
+                        Buchung buchung = JsonConvert.DeserializeObject<Buchung>(json, settings);
+
+                        if (buchung.Kunde.Name.Equals(_Name, StringComparison.OrdinalIgnoreCase))
+                        {
+                            _buchungen.Add(buchung);
+                        }
                     }
                 }
-            }
 
-            BuchungenListBox.ItemsSource = _buchungen;
+                BuchungenListBox.ItemsSource = _buchungen;
         }
 
         private string ErstellePDF(Buchung buchung)
@@ -76,12 +76,27 @@ namespace Tierpension
                     PdfPage page = document.AddPage();
                     XGraphics gfx = XGraphics.FromPdfPage(page);
 
-                    XFont font = new XFont("Verdana", 12);
-                    gfx.DrawString("Ihr fett-kursiver Text", font, XBrushes.Black, new XPoint(10, 10), XStringFormats.TopLeft);
+                    XFont titleFont = new XFont("Arial", 18);
+                    XFont headerFont = new XFont("Arial", 14);
+                    XFont regularFont = new XFont("Arial", 12);
+
+                    gfx.DrawString("Ihre Rechnung", titleFont, XBrushes.Black, new XPoint(page.Width / 2, 30), XStringFormats.Center);
 
                     XTextFormatter tf = new XTextFormatter(gfx);
-                    XRect rect = new XRect(40, 40, page.Width - 80, page.Height - 80);
-                    tf.DrawString($"Buchungsnummer: {buchung.Buchungsnummer}\nKunde: {buchung.Kunde.Name}\nAdresse: {buchung.Kunde.Adresse}\nTelefonnummer: {buchung.Kunde.Telefonnummer}\nTiername: {buchung.Tier.Name}\nFixpreis: {buchung.Tier.Fixpreis}\nTagespreis: {buchung.Tier.Tagespreis}\nEssen: {string.Join(", ", buchung.Tier.Essen)}", font, XBrushes.Black, rect, XStringFormats.TopLeft);
+                    XRect rect = new XRect(40, 80, page.Width - 80, page.Height - 120);
+
+                    string content = $"Buchungsnummer: {buchung.Buchungsnummer}\n" +
+                                     $"Kunde: {buchung.Kunde.Name}\n" +
+                                     $"Adresse: {buchung.Kunde.Adresse}\n" +
+                                     $"Telefonnummer: {buchung.Kunde.Telefonnummer}\n\n" +
+                                     $"Tierart: {buchung.Tier.Name}\n" +
+                                     $"Fixpreis: {buchung.Tier.Fixpreis:C2}\n" +
+                                     $"Tagespreis: {buchung.Tier.Tagespreis:C2}\n" +
+                                     $"Essen: {string.Join(", ", buchung.Tier.Essen)}\n\n" +
+                                     $"Betrag: {buchung.Preis:C2} €";
+
+                    gfx.DrawString("Buchungsinformationen", headerFont, XBrushes.Black, new XPoint(40, 60));
+                    tf.DrawString(content, regularFont, XBrushes.Black, rect, XStringFormats.TopLeft);
 
                     document.Save(pdfPath);
                     document.Close();
@@ -162,6 +177,35 @@ namespace Tierpension
                 else
                 {
                     MessageBox.Show("PDF-Datei nicht gefunden.");
+                }
+            }
+        }
+        private void TierLöschen_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button button && button.DataContext is Buchung buchung)
+            {
+                if (MessageBox.Show($"Möchten Sie das Tier {buchung.Tier.Name} wirklich löschen?", "Bestätigung", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                {
+
+                    _buchungen.Remove(buchung);
+                    BuchungenListBox.ItemsSource = null;
+                    BuchungenListBox.ItemsSource = _buchungen;
+
+          
+                }
+            }
+        }
+
+        private void BesitzerLöschen_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button button && button.DataContext is Buchung buchung)
+            {
+                if (MessageBox.Show($"Möchten Sie den Besitzer {buchung.Kunde.Name} wirklich löschen?", "Bestätigung", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                {
+                    _buchungen.Remove(buchung);
+                    BuchungenListBox.ItemsSource = null;
+                    BuchungenListBox.ItemsSource = _buchungen;
+
                 }
             }
         }

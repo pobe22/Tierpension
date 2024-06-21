@@ -4,6 +4,15 @@
              xmlns:local="clr-namespace:Tierpension"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="ButtonStyle.xaml"></ResourceDictionary>
+                <ResourceDictionary Source="Styles.xaml"></ResourceDictionary>
+                <ResourceDictionary Source="TextBlockStyle.xaml"></ResourceDictionary>
+                <ResourceDictionary Source="TextBoxStyle.xaml"></ResourceDictionary>
+                <ResourceDictionary Source="BorderStyle.xaml"></ResourceDictionary>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
          
     </Application.Resources>
 </Application>

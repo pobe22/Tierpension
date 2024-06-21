@@ -16,11 +16,11 @@
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal">
-                            <!-- Hier fügen Sie das PDF-Icon hinzu -->
                             <Image Source="C:\Users\Benjamin.Pollak\Documents\2aDAC\ITL\Tierpension\Tierpension\pdficon.png" Width="20" Height="20" MouseDown="PdfIcon_Click"/>
-                            <!-- Hier fügen Sie den Text für die Buchung hinzu -->
                             <TextBlock Text="{Binding Buchungsnummer}" Margin="5"/>
                             <TextBlock Text="{Binding Kunde.Name}" Margin="5"/>
+                            <Button Content="Tier löschen" Click="TierLöschen_Click" Margin="5"/>
+                            <Button Content="Besitzer löschen" Click="BesitzerLöschen_Click" Margin="5"/>
                         </StackPanel>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
@@ -29,7 +29,7 @@
                 <Button Content="Jetzt abholen" 
                         Click="JetztAbholen_Click" 
                         Margin="10" 
-                        Height="25" 
+                        Height="60" 
                         Width="120" 
                         Background="#4CAF50" 
                         Foreground="White" 
@@ -38,7 +38,7 @@
                 <Button Content="Zurück zu Home" 
                         Click="ZurueckZumHome_Click" 
                         Margin="10" 
-                        Height="25" 
+                        Height="60" 
                         Width="120" 
                         Background="#FF5722" 
                         Foreground="White" 

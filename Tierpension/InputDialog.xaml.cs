@@ -5,6 +5,7 @@ namespace Tierpension
     public partial class InputDialog : Window
     {
         public string EnteredText { get; private set; }
+        public string SelectedStandort { get; private set; }
 
         public InputDialog(string prompt)
         {

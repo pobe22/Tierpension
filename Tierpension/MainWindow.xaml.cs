@@ -13,7 +13,6 @@ namespace Tierpension
         {
             InitializeComponent();
 
-            // Erstellen Sie einen Dialog zur Eingabe des Benutzernamens
             var inputDialog = new InputDialog("Bitte geben Sie Ihren Namen ein (Beispiel: Max Mustermann):");
             if (inputDialog.ShowDialog() == true)
             {
