@@ -30,8 +30,9 @@
                         <ComboBox Name="StandortComboBox" Grid.Row="0" SelectedIndex="0">
                             <ComboBoxItem Content="Linz"/>
                             <ComboBoxItem Content="Dornbirn"/>
+                            <ComboBoxItem Content="Wien"/>
                         </ComboBox>
-                        <TextBlock Text="Benutzername" Grid.Row="0" Style="{StaticResource DefaultTextBlock}"/>
+                        <TextBlock Text="Name (Bsp. Max Mustermann)" Grid.Row="0" Style="{StaticResource DefaultTextBlock}"/>
                         
 
                         <TextBox Name="UsernameTextBox" Grid.Row="1" Text="{Binding Username}" Style="{StaticResource LoginTextBox}"/>

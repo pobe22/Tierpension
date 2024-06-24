@@ -16,33 +16,52 @@ namespace Tierpension
         {
             JObject jsonObject = JObject.Load(reader);
 
-            // Überprüfe, ob das JSON-Dokument ein 'Tier'-Feld enthält
-            if (jsonObject["Name"] != null && jsonObject["Fixpreis"] != null && jsonObject["Tagespreis"] != null && jsonObject["Essen"] != null)
+            // Überprüfe, ob das JSON-Dokument die erforderlichen Felder enthält
+            if (jsonObject["Tierart"] != null && jsonObject["Tiername"] != null &&
+                jsonObject["Fixpreis"] != null && jsonObject["Tagespreis"] != null &&
+                jsonObject["Essen"] != null)
             {
-                string tierName = jsonObject["Name"]?.ToString();
+                string tierArt = jsonObject["Tierart"].ToString();
+                string tierName = jsonObject["Tiername"].ToString();
+
                 if (string.IsNullOrEmpty(tierName))
                 {
                     throw new Exception("Der Tiername im JSON-Dokument ist ungültig oder fehlt.");
                 }
 
-                Tier tier = tierName switch
+                Tier tier = tierArt switch
                 {
                     "Hund" => new Hund(
+                        tierArt,
                         tierName,
                         jsonObject["Fixpreis"].Value<decimal>(),
                         jsonObject["Tagespreis"].Value<decimal>(),
                         jsonObject["Essen"].ToObject<List<string>>()),
                     "Katze" => new Katze(
+                        tierArt,
                         tierName,
                         jsonObject["Fixpreis"].Value<decimal>(),
                         jsonObject["Tagespreis"].Value<decimal>(),
                         jsonObject["Essen"].ToObject<List<string>>()),
                     "Wellensittich" => new Wellensittich(
+                        tierArt,
                         tierName,
                         jsonObject["Fixpreis"].Value<decimal>(),
                         jsonObject["Tagespreis"].Value<decimal>(),
                         jsonObject["Essen"].ToObject<List<string>>()),
-                    _ => throw new Exception($"Unbekannter TierTyp: {tierName}")
+                    "Kaninchen" => new Kaninchen(
+                        tierArt,
+                        tierName,
+                        jsonObject["Fixpreis"].Value<decimal>(),
+                        jsonObject["Tagespreis"].Value<decimal>(),
+                        jsonObject["Essen"].ToObject<List<string>>()),
+                    "Meerschweinchen" => new Meerschweinchen(
+                        tierArt,
+                        tierName,
+                        jsonObject["Fixpreis"].Value<decimal>(),
+                        jsonObject["Tagespreis"].Value<decimal>(),
+                        jsonObject["Essen"].ToObject<List<string>>()),
+                    _ => throw new Exception($"Unbekannte Tierart: {tierArt}")
                 };
 
                 serializer.Populate(jsonObject.CreateReader(), tier);
@@ -50,14 +69,13 @@ namespace Tierpension
             }
             else
             {
-                throw new Exception("Das JSON-Dokument enthält kein 'Tier'-Feld oder es ist leer.");
+                throw new Exception("Das JSON-Dokument enthält nicht alle erforderlichen Felder oder ist leer.");
             }
         }
 
-
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
-            throw new NotImplementedException("WriteJson is not implemented");
+            throw new NotImplementedException();
         }
     }
 }

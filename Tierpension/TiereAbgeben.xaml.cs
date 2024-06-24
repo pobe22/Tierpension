@@ -15,31 +15,40 @@ namespace Tierpension
 
         public string BenutzerName { get; private set; }
         public string Standort { get; private set; }
+
         public TiereAbgeben(string benutzerName, string standort)
         {
             InitializeComponent();
-            InitialisiereTiere();
-            InitialisiereComboBox();
-            _tierpension = new Pension("Meine Tierpension", "Musterstraße 1"); 
+            _tierpension = new Pension("Meine Tierpension", "Musterstraße 1");
             BenutzerName = benutzerName;
             Standort = standort;
             DataContext = this;
+            InitialisiereTiere("Unbekannt");
+            InitialisiereComboBox();
         }
 
-        private void InitialisiereTiere()
+        private void InitialisiereTiere(string tiername)
         {
             _tiere = new Dictionary<string, Tier>
             {
-                { "Hund", new Hund("Hund", 20.0m, 10.0m, new List<string> { "Fleisch", "Knochen" }) },
-                { "Katze", new Katze("Katze", 15.0m, 8.0m, new List<string> { "Fisch", "Milch" }) },
-                { "Wellensittich", new Wellensittich("Wellensittich", 10.0m, 5.0m, new List<string> { "Samen", "Obst" }) }
+                { "Hund", new Hund("Hund", tiername, 20.0m, 10.0m, new List<string> { "Fleisch", "Knochen" }) },
+                { "Katze", new Katze("Katze", tiername, 15.0m, 8.0m, new List<string> { "Fisch", "Milch" }) },
+                { "Wellensittich", new Wellensittich("Wellensittich", tiername, 10.0m, 5.0m, new List<string> { "Samen", "Obst" }) },
+                { "Kaninchen", new Kaninchen("Kaninchen", tiername, 12.0m, 6.0m, new List<string> { "Heu", "Gemüse" }) },
+                { "Meerschweinchen", new Meerschweinchen("Meerschweinchen", tiername, 14.0m, 7.0m, new List<string> { "Gemüse", "Früchte" }) }
             };
         }
 
         private void InitialisiereComboBox()
         {
-            TierComboBox.Items.Clear();
-            TierComboBox.ItemsSource = _tiere.Keys;
+            if (_tiere != null)
+            {
+                TierComboBox.ItemsSource = _tiere.Keys;
+            }
+            else
+            {
+                MessageBox.Show("Die Tiere wurden noch nicht initialisiert.");
+            }
         }
 
         private void TierComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -61,7 +70,7 @@ namespace Tierpension
                 if (_tiere.ContainsKey(selectedTier))
                 {
                     Tier tier = _tiere[selectedTier];
-                    Kunde kunde = new Kunde(BenutzerName, Standort, AdresseTextBox.Text, TelefonnummerTextBox.Text);
+                    Kunde kunde = new Kunde(BenutzerName, AdresseTextBox.Text, Standort,  TelefonnummerTextBox.Text);
                     int tage = (int)TageSlider.Value;
 
                     decimal preis = Math.Round(tier.BerechnePreis(tage), 2);
@@ -84,7 +93,6 @@ namespace Tierpension
             }
         }
 
-
         private int FindeNeueBuchungsnummer()
         {
             int maxBuchungsnummer = 0;
@@ -101,11 +109,21 @@ namespace Tierpension
             return maxBuchungsnummer + 1;
         }
 
-
         private void BuchungAbschliessen_Click(object sender, RoutedEventArgs e)
         {
             if (_aktuelleBuchung != null)
             {
+                string tiername = TiernameTextBox.Text;
+                InitialisiereTiere(tiername);
+
+                // Update the selected animal with the new name
+                if (TierComboBox.SelectedItem is string selectedTier && _tiere.ContainsKey(selectedTier))
+                {
+                    Tier selectedAnimal = _tiere[selectedTier];
+                    selectedAnimal.Tiername = tiername;
+                    _aktuelleBuchung.Tier = selectedAnimal;
+                }
+
                 string json = JsonConvert.SerializeObject(_aktuelleBuchung, Newtonsoft.Json.Formatting.Indented);
                 string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, $"Buchung_{_aktuelleBuchung.Buchungsnummer}.json");
                 File.WriteAllText(filePath, json);
@@ -117,6 +135,7 @@ namespace Tierpension
                 MessageBox.Show("Es wurde keine Buchung erstellt.");
             }
         }
+
 
         private void TageSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {

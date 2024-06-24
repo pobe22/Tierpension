@@ -88,15 +88,23 @@ namespace Tierpension
                     XTextFormatter tf = new XTextFormatter(gfx);
                     XRect rect = new XRect(40, 80, page.Width - 80, page.Height - 120);
 
+                    // Aufruf der Care- und Call-Methoden des Tieres
+                    buchung.Tier.Care();
+                    string callDescription = buchung.Tier.Call();
+                    string careDescription = buchung.Tier.GetCareDescription();
+
                     string content = $"Buchungsnummer: {buchung.Buchungsnummer}\n" +
                                      $"Kunde: {buchung.Kunde.Name}\n" +
                                      $"Adresse: {buchung.Kunde.Adresse}\n" +
+                                     $"Standort: {buchung.Kunde.Standort}\n" +
                                      $"Telefonnummer: {buchung.Kunde.Telefonnummer}\n\n" +
-                                     $"Tierart: {buchung.Tier.Name}\n" +
+                                     $"Tierart: {buchung.Tier.Tierart}\n" +
                                      $"Fixpreis: {buchung.Tier.Fixpreis:C2}\n" +
                                      $"Tagespreis: {buchung.Tier.Tagespreis:C2}\n" +
                                      $"Essen: {string.Join(", ", buchung.Tier.Essen)}\n\n" +
-                                     $"Betrag: {buchung.Preis:C2} €";
+                                     $"Betrag: {buchung.Preis:C2} €\n\n" +
+                                     $"Pflege: {careDescription}\n\n" +
+                                     $"Rufbeschreibung: {callDescription}";
 
                     gfx.DrawString("Buchungsinformationen", headerFont, XBrushes.Black, new XPoint(40, 60));
                     tf.DrawString(content, regularFont, XBrushes.Black, rect, XStringFormats.TopLeft);
@@ -118,6 +126,7 @@ namespace Tierpension
                 return null;
             }
         }
+
 
         private void JetztAbholen_Click(object sender, RoutedEventArgs e)
         {
@@ -187,7 +196,7 @@ namespace Tierpension
         {
             if (sender is Button button && button.DataContext is Buchung buchung)
             {
-                if (MessageBox.Show($"Möchten Sie das Tier {buchung.Tier.Name} wirklich löschen?", "Bestätigung", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                if (MessageBox.Show($"Möchten Sie das Tier {buchung.Tier.Tiername} wirklich löschen?", "Bestätigung", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                 {
 
                     _buchungen.Remove(buchung);

@@ -14,7 +14,7 @@ namespace Tierpension
         {
             InitializeComponent();
 
-            var inputDialog = new InputDialog("Bitte geben Sie Ihren Namen ein (Beispiel: Max Mustermann):");
+            var inputDialog = new InputDialog("");
             if (inputDialog.ShowDialog() == true)
             {
                 Name = inputDialog.EnteredText;
