@@ -23,11 +23,6 @@ namespace Tierpension
         public abstract void Care();
         public abstract string Call();
 
-        public override string ToString()
-        {
-            return Call();
-        }
-
         public string GetCareDescription()
         {
             Care(); 
