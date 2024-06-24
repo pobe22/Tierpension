@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using System.Windows.Controls;
 
 namespace Tierpension
 {
@@ -17,6 +18,7 @@ namespace Tierpension
         {
             // Speichern Sie den eingegebenen Benutzernamen
             EnteredText = UsernameTextBox.Text;
+            SelectedStandort = (StandortComboBox.SelectedItem as ComboBoxItem)?.Content.ToString();
 
             // Schließen Sie das Dialogfeld
             DialogResult = true;

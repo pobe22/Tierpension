@@ -27,13 +27,16 @@ namespace Tierpension
     {
         private List<Buchung> _buchungen = new List<Buchung>();
         private string _Name;
+        private string _Standort;
 
-        public TiereAbholen(string Name)
+
+        public TiereAbholen(string Name, string Standort)
         {
             InitializeComponent();
             _Name = Name;
             LadeBuchungen();
             DataContext = this;
+            _Standort = Standort;
         }
 
 

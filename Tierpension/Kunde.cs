@@ -12,13 +12,15 @@ namespace Tierpension
         public string Adresse { get; set; }
         public string Telefonnummer { get; set; }
         public List<Tier> Tiere { get; set; }
+        public string Standort { get; set; }
 
-        public Kunde(string name, string adresse, string telefonnummer)
+        public Kunde(string name, string adresse, string telefonnummer, string standort)
         {
             Name = name;
             Adresse = adresse;
             Telefonnummer = telefonnummer;
             Tiere = new List<Tier>();
+            Standort = standort;
         }
 
         public void AddTier(Tier tier)

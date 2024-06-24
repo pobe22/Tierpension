@@ -14,13 +14,15 @@ namespace Tierpension
         private Buchung _aktuelleBuchung;
 
         public string BenutzerName { get; private set; }
-        public TiereAbgeben(string benutzerName)
+        public string Standort { get; private set; }
+        public TiereAbgeben(string benutzerName, string standort)
         {
             InitializeComponent();
             InitialisiereTiere();
             InitialisiereComboBox();
             _tierpension = new Pension("Meine Tierpension", "Musterstraße 1"); 
             BenutzerName = benutzerName;
+            Standort = standort;
             DataContext = this;
         }
 
@@ -59,7 +61,7 @@ namespace Tierpension
                 if (_tiere.ContainsKey(selectedTier))
                 {
                     Tier tier = _tiere[selectedTier];
-                    Kunde kunde = new Kunde(BenutzerName, AdresseTextBox.Text, TelefonnummerTextBox.Text);
+                    Kunde kunde = new Kunde(BenutzerName, Standort, AdresseTextBox.Text, TelefonnummerTextBox.Text);
                     int tage = (int)TageSlider.Value;
 
                     decimal preis = Math.Round(tier.BerechnePreis(tage), 2);

@@ -20,12 +20,19 @@
                 <TextBlock Text="Hallo Kunde!" Style="{StaticResource LoginTextBlock}"/>
                 <Grid VerticalAlignment="Center">
                     <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
                     <StackPanel Margin="10">
                         <TextBlock x:Name="PromptTextBlock" TextWrapping="Wrap"/>
+                        <TextBlock Text="Standort" Grid.Row="0" Style="{StaticResource DefaultTextBlock}"/>
+                        <ComboBox Name="StandortComboBox" Grid.Row="0" SelectedIndex="0">
+                            <ComboBoxItem Content="Linz"/>
+                            <ComboBoxItem Content="Dornbirn"/>
+                        </ComboBox>
                         <TextBlock Text="Benutzername" Grid.Row="0" Style="{StaticResource DefaultTextBlock}"/>
+                        
 
                         <TextBox Name="UsernameTextBox" Grid.Row="1" Text="{Binding Username}" Style="{StaticResource LoginTextBox}"/>
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,0">

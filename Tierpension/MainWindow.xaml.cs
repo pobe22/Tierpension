@@ -9,6 +9,7 @@ namespace Tierpension
     public partial class MainWindow : Window
     {
         public static string Name { get; private set; }
+        public static string Standort { get; private set; }
         public MainWindow()
         {
             InitializeComponent();
@@ -17,7 +18,10 @@ namespace Tierpension
             if (inputDialog.ShowDialog() == true)
             {
                 Name = inputDialog.EnteredText;
+                Standort = inputDialog.SelectedStandort;
                 this.Visibility = Visibility.Visible;
+
+                this.Title = $"Willkommen, {Name} - Standort: {Standort}";
             }
             else
             {
@@ -28,7 +32,7 @@ namespace Tierpension
 
         private void TiereAbgeben_Click(object sender, RoutedEventArgs e)
         {
-            var tiereAbgebenPage = new TiereAbgeben(Name);
+            var tiereAbgebenPage = new TiereAbgeben(Name, Standort);
             NavigationWindow window = new NavigationWindow();
             window.Content = tiereAbgebenPage;
             window.Show();
@@ -37,7 +41,7 @@ namespace Tierpension
 
         private void TiereAbholen_Click(object sender, RoutedEventArgs e)
         {
-            var tiereAbholenPage = new TiereAbholen(Name);
+            var tiereAbholenPage = new TiereAbholen(Name, Standort);
             NavigationWindow window = new NavigationWindow();
             window.Content = tiereAbholenPage;
             window.Show();
