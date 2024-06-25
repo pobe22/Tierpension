@@ -105,15 +105,9 @@ Klicken Sie auf das PDF-Symbol neben einer Buchung, um ein PDF mit den Buchungsd
 
 ## Installation
 
-1. Klonen Sie das Repository: `git clone https://github.com/your-repo/tierpension.git`
+1. Klonen Sie das Repository: `git clone https://github.com/pobe22/Tierpension.git`
 2. Öffnen Sie das Projekt in Visual Studio.
 3. Stellen Sie sicher, dass alle Abhängigkeiten installiert sind.
 4. Starten Sie die Anwendung.
 
-## Lizenz
 
-Dieses Projekt ist lizenziert unter der MIT-Lizenz. Weitere Informationen finden Sie in der `LICENSE`-Datei.
-
-## Autor
-
-Erstellt von Ihrem Namen.
